@@ -13,6 +13,10 @@ Model definition in model/model.py
 Model is trained on [this dataset](https://github.com/phelber/EuroSAT).  
    See references section
 
+### Map
+This is output map of prototype, red tiles have been classified as urbanized areas, as we can see there is a lot of place for improvement.
+![alt text](images/cracow-map.png)
+
 ## References
 
 [1] Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification. Patrick Helber, Benjamin Bischke, Andreas Dengel, Damian Borth. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 2019.
