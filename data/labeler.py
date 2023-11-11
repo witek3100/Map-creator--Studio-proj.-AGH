@@ -17,7 +17,7 @@ class Labeler:
             self.df = pd.DataFrame(columns=['image', 'label'])
             self.image_num = 1
 
-        self.images_amount = len(os.listdir(os.path.join(BASE_DIR, 'data/raw/maps')))
+        self.images_amount = len(os.listdir(os.path.join(BASE_DIR, 'data/raw/images')))
 
         app = QApplication(sys.argv)
         self.window = QMainWindow()
@@ -47,7 +47,7 @@ class Labeler:
         self.image = QLabel(self.window)
         self.image.setGeometry(230, 200, 300, 300)
 
-        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/maps/{self.image_num}.tif'))
+        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/images/{self.image_num}.tif'))
         imag = self.img.resize((300, 300))
         qimage = QImage(imag.tobytes(), imag.width, imag.height, QImage.Format_RGB888)
         self.image.setPixmap(QPixmap.fromImage(qimage))
@@ -60,7 +60,7 @@ class Labeler:
         self.df.loc[len(self.df)] = new_row
 
         self.image_num += 1
-        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/maps/{self.image_num}.tif'))
+        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/images/{self.image_num}.tif'))
         imag = self.img.resize((300, 300))
         qimage = QImage(imag.tobytes(), imag.width, imag.height, QImage.Format_RGB888)
         self.image.setPixmap(QPixmap.fromImage(qimage))
@@ -71,7 +71,7 @@ class Labeler:
     def back(self):
         self.image_num -= 1
 
-        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/maps/{self.image_num}.tif'))
+        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/images/{self.image_num}.tif'))
         imag = self.img.resize((300, 300))
         qimage = QImage(imag.tobytes(), imag.width, imag.height, QImage.Format_RGB888)
         self.image.setPixmap(QPixmap.fromImage(qimage))
