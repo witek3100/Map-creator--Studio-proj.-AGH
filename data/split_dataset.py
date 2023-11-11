@@ -8,7 +8,7 @@ if __name__ == "__main__":
     try:
         df = pd.read_csv(os.path.join(BASE_DIR, 'data/raw/dataset.csv'))
     except FileNotFoundError:
-        raise ('dataset.csv file not found - label maps data first')
+        raise ('dataset.csv file not found - label your data first')
 
     split = StratifiedShuffleSplit(n_splits=1, test_size=0.3, random_state=42)
 
