@@ -1,41 +1,45 @@
-# Map Creator - Studio-Projektowe-AGH
-Purpose of this project is to create maps from sattelite images using deep learning
+# Overview
+## Problem Statement
+Purpose of the project is to create deep learning based system for creating maps of urbanized areas from satellite images.
+## Approach
+The concept of the entire project is quite simple, we take a satellite image, divide it into small pieces of 50x50 pixels, which are then classified by a previously trained model, and finally, based on the classified data, we create a map.
+## Used technologies
+Entire projects is written in python, satellite images are fetched from qgis, ml part is made using PyTorch.
 
-## Prototype
+# Project structure
+<pre>
+   ├── data
+   |     ├── processed            # Data for training
+   |     |       ├── images
+   |     |       ├── test.csv
+   |     |       ├── train.csv
+   |     |       └── validation.csv
+   |     ├── raw                     # Data to label and split
+   |     |    └── images
+   |     ├── labeler.py            # PyQt gui for labeling images
+   |     ├── split_dataset.py        # script spliting data to train, val and test sets
+   |     └── split_image.py         # script spliting satellite image to 50x50 pixels tiles
+   ├── maps                   
+   ├── src
+   |     ├── ml
+   |     |   ├── dataset            # Pytorch datasets, dataloaders and transformations
+   |     |   |      ├── dataset.py
+   |     |   |      └── transformations.py
+   |     |   ├── models                   # Models definitions and corresponding weights files
+   |     |   |  
+   |     |   ├── scripts                  # scripts for training, evaluating and predicting
+   |     |   |      ├── predict.py
+   |     |   |      ├── test.py
+   |     |   |      └── train.py
+   |     |   └── utils                  # Everything else used for training
+   |     |          ├── early_stopping.py
+   |     |          ├── metrics.py
+   |     |          ├── optimizers.py
+   |     |
+   |     ├── map_generator             # Code for generating map from model predictions
+   |     |         ### TODO ###
+   |     ├── qgis_api                  # Api for fetching setallite images
+   |               ### TODO ###
+</pre>
 
-The prototype creates a map of urbanized areas from a satellite image of Krakow. The entire concept looks as follows: We build a model composed of a pre-trained deep neural network and additional output layers that we train. Then, we divide the initial satellite image into smaller images, classify them, and use this classification to create a map.
-
-### Model
-Model base is ResNet34, next we've added three blocks of dense, batch normalization and dropout layers sequence.  
-Model definition in model/model.py
-
-### Data
-Model is trained on [this dataset](https://github.com/phelber/EuroSAT).  
-   See references section
-
-### Map
-This is output map of prototype, red tiles have been classified as urbanized areas, as we can see there is a lot of place for improvement.
-![alt text](images/cracow-map.png)
-
-## References
-
-[1] Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification. Patrick Helber, Benjamin Bischke, Andreas Dengel, Damian Borth. IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing, 2019.
-
-@article{helber2019eurosat,
-  title={Eurosat: A novel dataset and deep learning benchmark for land use and land cover classification},
-  author={Helber, Patrick and Bischke, Benjamin and Dengel, Andreas and Borth, Damian},
-  journal={IEEE Journal of Selected Topics in Applied Earth Observations and Remote Sensing},
-  year={2019},
-  publisher={IEEE}
-}
-
-[2] Introducing EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification. Patrick Helber, Benjamin Bischke, Andreas Dengel. 2018 IEEE International Geoscience and Remote Sensing Symposium, 2018.
-
-@inproceedings{helber2018introducing,
-  title={Introducing EuroSAT: A Novel Dataset and Deep Learning Benchmark for Land Use and Land Cover Classification},
-  author={Helber, Patrick and Bischke, Benjamin and Dengel, Andreas and Borth, Damian},
-  booktitle={IGARSS 2018-2018 IEEE International Geoscience and Remote Sensing Symposium},
-  pages={204--207},
-  year={2018},
-  organization={IEEE}
-}
+# Prototype
