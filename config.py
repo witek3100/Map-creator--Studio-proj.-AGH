@@ -1,2 +1,2 @@
 
-BASE_DIR = '/home/witek/PycharmProjects/Studio-Projektowe-AGH'
+BASE_DIR = '/home/witek/PycharmProjects/Map-creator--Studio-proj.-AGH'

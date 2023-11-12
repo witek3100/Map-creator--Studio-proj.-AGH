@@ -60,7 +60,13 @@ class Labeler:
         self.df.loc[len(self.df)] = new_row
 
         self.image_num += 1
-        self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/images/{self.image_num}.tif'))
+        try:
+            self.img = Image.open(os.path.join(BASE_DIR, f'data/raw/images/{self.image_num}.tif'))
+        except FileNotFoundError:
+            self.save()
+            print('All images labeled, data seved to dataset.csv...')
+            sys.exit()
+
         imag = self.img.resize((300, 300))
         qimage = QImage(imag.tobytes(), imag.width, imag.height, QImage.Format_RGB888)
         self.image.setPixmap(QPixmap.fromImage(qimage))

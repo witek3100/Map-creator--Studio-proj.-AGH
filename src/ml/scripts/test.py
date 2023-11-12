@@ -1,27 +1,26 @@
 import os
 import torch
-from ..models.model import Model
+import sys
+from ..models.model1 import Model
 from ..datasets import dataset, transforms
 from torch.utils.data import DataLoader
 from config import BASE_DIR
-from ..engines.metrics import accuracy
-
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-model = Model()
-model = model.load_state_dict(torch.load('model/model.pth', map_location=torch.device(DEVICE)))
-
-criterion = torch.nn.BCELoss()
-
-test_df = os.path.join(BASE_DIR, 'data/processed/images/test.csv')
-test_loader = DataLoader(
-    dataset.Dataset(test_df, transforms.test_val_transforms),
-    batch_size=64,
-    shuffle=True,
-)
+from ..utils.metrics import accuracy
 
 
-def test():
+def test(model):
+
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    criterion = torch.nn.BCELoss()
+
+    test_df = os.path.join(BASE_DIR, 'data/processed/images/test.csv')
+    test_loader = DataLoader(
+        dataset.Dataset(test_df, transforms.test_val_transforms),
+        batch_size=64,
+        shuffle=True,
+    )
+
     test_loss = 0.0
     test_acc = 0.0
 
@@ -46,4 +45,17 @@ def test():
     print(f'Accuracy: {test_acc}')
 
 if __name__ == '__main__':
-    test()
+
+    try:
+        model_name = sys.argv[1]
+    except IndexError:
+        print('No model name provided')
+        sys.exit()
+        # TODO
+
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = Model()
+    model.load_state_dict(torch.load('models/model1.pth', map_location=torch.device(DEVICE)))
+
+    test(model, DEVICE)

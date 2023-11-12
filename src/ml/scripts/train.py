@@ -1,45 +1,41 @@
 import os
+import sys
 import torch
-from ..models.model import Model
+from ..models.model1 import Model
 from ..datasets import dataset, transforms
-from ..engines.metrics import accuracy
-from ..engines.early_stopping import EarlyStopping
+from ..utils.metrics import accuracy
+from ..utils.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader
 from config import BASE_DIR
 
 
-DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-NUM_EPOCHS = 15
-BATCH_SIZE = 64
+def train(model, DEVICE):
 
-train_df = os.path.join(BASE_DIR, 'data/processed/images/train.csv')
-train_loader = DataLoader(
-    dataset.Dataset(train_df, transforms.train_transforms),
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-)
+    NUM_EPOCHS = 15
+    BATCH_SIZE = 64
 
-val_df = os.path.join(BASE_DIR, 'data/processed/images/validation.csv')
-val_loader = DataLoader(
-    dataset.Dataset(val_df, transforms.test_val_transforms),
-    batch_size=BATCH_SIZE,
-    shuffle=True,
-)
+    train_df = os.path.join(BASE_DIR, 'data/processed/images/train.csv')
+    train_loader = DataLoader(
+        dataset.Dataset(train_df, transforms.train_transforms),
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+    )
 
-model = Model()
+    val_df = os.path.join(BASE_DIR, 'data/processed/images/validation.csv')
+    val_loader = DataLoader(
+        dataset.Dataset(val_df, transforms.test_val_transforms),
+        batch_size=BATCH_SIZE,
+        shuffle=True,
+    )
 
-criterion = torch.nn.BCELoss()
+    criterion = torch.nn.BCELoss()
+    optimizer = torch.optim.Adam(model.parameters())
+    es = EarlyStopping(2, 0.01)
 
-optimizer = torch.optim.Adam(model.parameters())
-
-es = EarlyStopping(2, 0.01)
-
-train_losses = []
-val_losses = []
-train_accs = []
-val_accs = []
-
-def train():
+    train_losses = []
+    val_losses = []
+    train_accs = []
+    val_accs = []
 
     for epoch in range(NUM_EPOCHS):
         print('\n ----------------------------------')
@@ -105,4 +101,16 @@ def train():
     torch.save(model.state_dict(), os.path.join(BASE_DIR, 'src/ml/models/model.pth'))
 
 if __name__ == '__main__':
-    train()
+
+    try:
+        model_name = sys.argv[1]
+    except IndexError:
+        print('No model name provided')
+
+    # TODO
+    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+    model = Model()
+    model.load_state_dict(torch.load('models/model1.pth', map_location=torch.device(DEVICE)))
+
+    train(model, DEVICE)

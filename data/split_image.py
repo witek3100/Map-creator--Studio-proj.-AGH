@@ -13,7 +13,8 @@ if __name__ == "__main__":
         try:
             image_name = os.listdir(path)[0]
         except IndexError:
-            raise ('No images available in satellite images folder')
+            print('No images available in satellite images folder')
+            sys.exit()
 
     image_path = os.path.join(path, image_name)
     image = Image.open(image_path)
