@@ -1,6 +1,7 @@
 import os
 import sys
 import torch
+import pandas as pd
 from models.model1 import Model
 from datasets import dataset, transforms
 from utils.metrics import accuracy
@@ -19,14 +20,14 @@ def train(model):
     NUM_EPOCHS = 15
     BATCH_SIZE = 64
 
-    train_df = os.path.join(BASE_DIR, 'data/processed/images/train.csv')
+    train_df = pd.read_csv(os.path.join(BASE_DIR, 'data/processed/train.csv'))
     train_loader = DataLoader(
         dataset.Dataset(train_df, transforms.train_transforms),
         batch_size=BATCH_SIZE,
         shuffle=True,
     )
 
-    val_df = os.path.join(BASE_DIR, 'data/processed/images/validation.csv')
+    val_df = pd.read_csv(os.path.join(BASE_DIR, 'data/processed/validation.csv'))
     val_loader = DataLoader(
         dataset.Dataset(val_df, transforms.test_val_transforms),
         batch_size=BATCH_SIZE,
@@ -53,7 +54,7 @@ def train(model):
 
         model.train()
         for images, labels in train_loader:
-            images, labels = images.to(DEVICE), labels.to(device)
+            images, labels = images.to(device), labels.to(device)
 
             optimizer.zero_grad()
             out = model(images)
