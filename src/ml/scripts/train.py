@@ -1,15 +1,20 @@
 import os
 import sys
 import torch
-from ..models.model1 import Model
-from ..datasets import dataset, transforms
-from ..utils.metrics import accuracy
-from ..utils.early_stopping import EarlyStopping
+from models.model1 import Model
+from datasets import dataset, transforms
+from utils.metrics import accuracy
+from utils.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader
 from config import BASE_DIR
 
 
-def train(model, DEVICE):
+def train(model):
+
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f'Training using: {device}')
+
+    model = model.to(device)
 
     NUM_EPOCHS = 15
     BATCH_SIZE = 64
@@ -48,7 +53,7 @@ def train(model, DEVICE):
 
         model.train()
         for images, labels in train_loader:
-            images, labels = images.to(DEVICE), labels.to(DEVICE)
+            images, labels = images.to(DEVICE), labels.to(device)
 
             optimizer.zero_grad()
             out = model(images)
@@ -74,7 +79,7 @@ def train(model, DEVICE):
         model.eval()
         with torch.no_grad():
             for images, labels in val_loader:
-                images, labels = images.to(DEVICE), labels.to(DEVICE)
+                images, labels = images.to(device), labels.to(device)
 
                 out = model(images)
 
@@ -104,13 +109,14 @@ if __name__ == '__main__':
 
     try:
         model_name = sys.argv[1]
+        try:
+            model = Model()
+            model.load_state_dict(torch.load(os.path.join(BASE_DIR, 'src/ml/models/model1.pth'), map_location=torch.device('cpu')))
+        except FileNotFoundError:
+            print('Model not found')
+            sys.exit()
     except IndexError:
         print('No model name provided')
+        sys.exit()
 
-    # TODO
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = Model()
-    model.load_state_dict(torch.load('models/model1.pth', map_location=torch.device(DEVICE)))
-
-    train(model, DEVICE)
+    train(model)

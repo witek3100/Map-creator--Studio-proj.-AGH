@@ -13,6 +13,7 @@ class Dataset(Dataset):
         return len(self.df)
 
     def __getitem__(self, idx):
+        print(type(idx))
         path = os.path.join(BASE_DIR, f"data/processed/images/{self.df['image'][idx]}.tif")
 
         image = Image.open(path)
