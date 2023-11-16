@@ -10,7 +10,6 @@ train_transforms = transforms.Compose([
 ])
 
 test_val_transforms = transforms.Compose([
-    transforms.ToPILImage(),
     transforms.Resize((224, 224), interpolation=Image.NEAREST),
     transforms.ToTensor(),
 ])
