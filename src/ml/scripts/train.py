@@ -2,12 +2,12 @@ import os
 import sys
 import torch
 import pandas as pd
-from models.model1 import Model
 from datasets import dataset, transforms
 from utils.metrics import accuracy
 from utils.early_stopping import EarlyStopping
 from torch.utils.data import DataLoader
 from config import BASE_DIR
+import importlib
 
 
 def train(model):
@@ -111,9 +111,10 @@ if __name__ == '__main__':
     try:
         model_name = sys.argv[1]
         try:
-            model = Model()
-            model.load_state_dict(torch.load(os.path.join(BASE_DIR, 'src/ml/models/model1.pth'), map_location=torch.device('cpu')))
-        except FileNotFoundError:
+            module = importlib.import_module(f'models.{model_name}')
+            model = module.Model()
+            model.load_state_dict(torch.load(os.path.join(BASE_DIR, f'src/ml/models/{model_name}.pth'), map_location=torch.device('cpu')))
+        except (FileNotFoundError, ModuleNotFoundError):
             print('Model not found')
             sys.exit()
     except IndexError:

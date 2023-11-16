@@ -1,20 +1,22 @@
 import os
 import torch
 import sys
-from ..models.model1 import Model
-from ..datasets import dataset, transforms
+import pandas as pd
+import importlib
+from datasets import dataset, transforms
 from torch.utils.data import DataLoader
 from config import BASE_DIR
-from ..utils.metrics import accuracy
+from utils.metrics import accuracy
 
 
 def test(model):
 
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f'testing using {device}')
 
     criterion = torch.nn.BCELoss()
 
-    test_df = os.path.join(BASE_DIR, 'data/processed/images/test.csv')
+    test_df = pd.read_csv(os.path.join(BASE_DIR, 'data/processed/test.csv'))
     test_loader = DataLoader(
         dataset.Dataset(test_df, transforms.test_val_transforms),
         batch_size=64,
@@ -25,7 +27,7 @@ def test(model):
     test_acc = 0.0
 
     for images, labels in test_loader:
-        images, labels = images.to(DEVICE), labels.to(DEVICE)
+        images, labels = images.to(device), labels.to(device)
 
         out = model(images)
 
@@ -41,21 +43,23 @@ def test(model):
     test_acc = test_acc / len(test_loader)
 
     print("TEST")
-    print(f'Loss: {test_loss}')
-    print(f'Accuracy: {test_acc}')
+    print(f'Loss: {round(test_loss, 5)}')
+    print(f'Accuracy: {round(test_acc, 5)}')
 
 if __name__ == '__main__':
 
     try:
         model_name = sys.argv[1]
+        try:
+            module = importlib.import_module(f'models.{model_name}')
+            model = module.Model()
+            model.load_state_dict(torch.load(os.path.join(BASE_DIR, f'src/ml/models/{model_name}.pth'), map_location=torch.device('cpu')))
+        except (FileNotFoundError, ModuleNotFoundError):
+            print('Model not found')
+            sys.exit()
+
     except IndexError:
         print('No model name provided')
         sys.exit()
-        # TODO
 
-    DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-    model = Model()
-    model.load_state_dict(torch.load('models/model1.pth', map_location=torch.device(DEVICE)))
-
-    test(model, DEVICE)
+    test(model)
