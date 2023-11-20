@@ -26,18 +26,19 @@ def test(model):
     test_loss = 0.0
     test_acc = 0.0
 
-    for images, labels in test_loader:
-        images, labels = images.to(device), labels.to(device)
+    with torch.no_grad():
+        for images, labels in test_loader:
+            images, labels = images.to(device), labels.to(device)
 
-        out = model(images)
+            out = model(images)
 
-        labels = labels.unsqueeze(1)
-        labels = labels.float()
+            labels = labels.unsqueeze(1)
+            labels = labels.float()
 
-        loss = criterion(out, labels)
+            loss = criterion(out, labels)
 
-        test_loss += loss.item()
-        test_acc += accuracy(out, labels)
+            test_loss += loss.item()
+            test_acc += accuracy(out, labels)
 
     test_loss = test_loss / len(test_loader)
     test_acc = test_acc / len(test_loader)
@@ -54,6 +55,7 @@ if __name__ == '__main__':
             module = importlib.import_module(f'models.{model_name}')
             model = module.Model()
             model.load_state_dict(torch.load(os.path.join(BASE_DIR, f'src/ml/models/{model_name}.pth'), map_location=torch.device('cpu')))
+            model.eval()
         except (FileNotFoundError, ModuleNotFoundError):
             print('Model not found')
             sys.exit()

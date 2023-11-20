@@ -13,7 +13,6 @@ tile_size = 50
 image_size = list(map(lambda x : math.floor(x / 50), image.size))
 
 tiles = np.empty(image_size, dtype=object)
-print(image_size)
 
 for i in range(0, tiles.shape[0]):
     for j in range(0, tiles.shape[1]):
@@ -25,7 +24,6 @@ for i in range(0, tiles.shape[0]):
 predictions = predict('model1', tiles.flatten())
 
 pred_map = np.array(predictions).reshape(image_size)
-print(pred_map.shape)
 
 for i in range(0, pred_map.shape[0]):
     for j in range(0, pred_map.shape[1]):

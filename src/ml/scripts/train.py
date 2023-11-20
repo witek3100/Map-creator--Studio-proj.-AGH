@@ -104,7 +104,7 @@ def train(model):
             print('validation loss is not decresing - training stopped')
             break
 
-    torch.save(model.state_dict(), os.path.join(BASE_DIR, 'src/ml/models/model.pth'))
+    torch.save(model.state_dict(), os.path.join(BASE_DIR, 'src/ml/models/model1.pth'))
 
 if __name__ == '__main__':
 
