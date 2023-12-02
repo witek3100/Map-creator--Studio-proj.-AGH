@@ -6,7 +6,10 @@ import numpy as np
 from src.ml.scripts.predict import predict
 from PIL import Image
 from config import BASE_DIR
-from scipy.ndimage import measurements, zoom
+from scipy.ndimage import measurements
+from map import Map
+from pyproj import Transformer
+from shapely.geometry import Polygon
 from numba import jit
 
 
@@ -29,7 +32,7 @@ def is_inside(x, y, poly):
 
     return inside
 
-def generate_map(image, model='model1'):
+def generate_map(image, bounding_box, model='model1'):
 
     tile_size = 50
 
@@ -80,30 +83,28 @@ def generate_map(image, model='model1'):
     new_areas = [cv2.convexHull(np.array(area)) for area in new_areas]
     new_areas = [np.array([x[0] for x in area]) for area in new_areas]
 
-    #########################
-    map = np.zeros(image.size)
-    for i in range(map.shape[0]):
-        print(f'{i}/{map.shape[0]}')
-        for j in range(map.shape[1]):
-            for area in new_areas:
-                if is_inside(i, j, area):
-                    map[i, j] = 200
-    result = np.stack((map.T, np.array(image.split()[1]), np.array(image.split()[2])), axis=0)
-    result = result.T.astype('uint8')
-    result = np.transpose(result, (1, 0, 2))
-    result = Image.fromarray(result)
-    result.show()
-    #########################
+    dx = abs(bounding_box[1][0] - bounding_box[0][0]) / image_size[0]
+    dy = abs(bounding_box[1][1] - bounding_box[0][1]) / image_size[1]
 
-    return new_areas
+    new_areas = [[(bounding_box[0][0] + point[0] * dx, bounding_box[0][1] + point[1] * dy) for point in area] for area in new_areas]
+
+    new_areas = [area for area in new_areas if len(area) > 3]
+
+    return Map(new_areas)
 
 
 if __name__ == '__main__':
     try:
         image_name = sys.argv[1]
         try:
-            image = Image.open(os.path.join(BASE_DIR, f'data/satellite_images/{image_name}'))
-            generate_map(image.crop((0, 0, 6000, 6000)))
+            image = Image.open(os.path.join(BASE_DIR, f'data/satellite_images/ns.tif'))
+            bounding_box = (2298771.528100000,2304931.808500000,6387766.884300000,6392608.997100000)
+
+            transformer = Transformer.from_crs("EPSG:3857", "EPSG:4326")
+            bounding_box = (transformer.transform(bounding_box[1], bounding_box[2]), transformer.transform(bounding_box[0], bounding_box[3]))
+
+            map = generate_map(image.crop((0, 0, 500, 500)), bounding_box)
+            map.to_geojson()
 
         except FileNotFoundError:
             raise Exception("Can't find this image")
