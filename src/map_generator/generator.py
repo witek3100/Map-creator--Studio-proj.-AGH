@@ -9,7 +9,6 @@ from config import BASE_DIR
 from scipy.ndimage import measurements
 from map import Map
 from pyproj import Transformer
-from shapely.geometry import Polygon
 from numba import jit
 
 
@@ -58,8 +57,8 @@ def generate_map(image, bounding_box, model='model1'):
     pred_map[mask] = 0
     pred_mapT = pred_map.T
 
-    areas = {i: [(x, y) for x, y in zip(np.where(pred_map == i)[0], np.where(pred_map == i)[1])] for i in
-             np.unique(pred_map)[1:]}
+    areas = {i: [(x, y) for x, y in zip(np.where(pred_mapT == i)[0], np.where(pred_mapT == i)[1])] for i in
+             np.unique(pred_mapT)[1:]}
 
     for key in areas.keys():
         row = areas[key]
@@ -86,7 +85,7 @@ def generate_map(image, bounding_box, model='model1'):
     dx = abs(bounding_box[1][0] - bounding_box[0][0]) / image_size[0]
     dy = abs(bounding_box[1][1] - bounding_box[0][1]) / image_size[1]
 
-    new_areas = [[(bounding_box[0][0] + point[0] * dx, bounding_box[0][1] + point[1] * dy) for point in area] for area in new_areas]
+    new_areas = [[(bounding_box[0][1] + (point[1] / tile_size) * dy, bounding_box[0][0] - (point[0] / tile_size) * dx) for point in area] for area in new_areas]
 
     new_areas = [area for area in new_areas if len(area) > 3]
 
@@ -97,13 +96,14 @@ if __name__ == '__main__':
     try:
         image_name = sys.argv[1]
         try:
-            image = Image.open(os.path.join(BASE_DIR, f'data/satellite_images/ns.tif'))
-            bounding_box = (2298771.528100000,2304931.808500000,6387766.884300000,6392608.997100000)
+            image = Image.open(os.path.join(BASE_DIR, f'data/satellite_images/tgb.tif'))
+            bounding_box = (2296423.7193, 2301518.1, 6392395.1, 6396175.5329)
 
             transformer = Transformer.from_crs("EPSG:3857", "EPSG:4326")
-            bounding_box = (transformer.transform(bounding_box[1], bounding_box[2]), transformer.transform(bounding_box[0], bounding_box[3]))
+            bounding_box = (transformer.transform(bounding_box[0], bounding_box[3]), transformer.transform(bounding_box[1], bounding_box[2]))
+            print(bounding_box)
 
-            map = generate_map(image.crop((0, 0, 500, 500)), bounding_box)
+            map = generate_map(image, bounding_box)
             map.to_geojson()
 
         except FileNotFoundError:
