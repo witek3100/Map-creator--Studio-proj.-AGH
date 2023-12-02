@@ -57,11 +57,11 @@ if __name__ == '__main__':
             model.load_state_dict(torch.load(os.path.join(BASE_DIR, f'src/ml/models/{model_name}.pth'), map_location=torch.device('cpu')))
             model.eval()
         except (FileNotFoundError, ModuleNotFoundError):
-            print('Model not found')
+            raise Exception('Model not found')
             sys.exit()
 
     except IndexError:
-        print('No model name provided')
+        raise Exception('No model name provided')
         sys.exit()
 
     test(model)
