@@ -3,8 +3,6 @@
 <div style="text-align: center"> <b>Autorzy</b> </div>
 <div style="text-align: center"> Witold Nowogórski, Szymon Jurecki, Arkadiusz Paterak </div>
 
-## Opis problemu
-
 ## Metody rozwiązania problemu
 
 ### Klasyfikacja binarna fragmentów zdjęć
