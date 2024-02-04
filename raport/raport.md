@@ -26,4 +26,4 @@
 
 ## Kontrybucje autorów
 
-Witold Nowogórski stworzył program do ręcznej adnotacji danych oraz był pomysłodawcą pierwszej metody. Szymon Jurecki ... Arkadiusz Paterak zaproponował użycie modelu U-Net, który zaimplementował, stworzył także prosty interfejs do zaprezentowania działania modelu. Wszyscy autorzy wspólnie przygotowali raport.
+Witold Nowogórski stworzył program do ręcznej adnotacji danych oraz był pomysłodawcą pierwszej metody. Szymon Jurecki przygotował zbiór danych i go zaetykietował. Arkadiusz Paterak zaproponował użycie modelu U-Net, który zaimplementował, stworzył także prosty interfejs do zaprezentowania działania modelu. Wszyscy autorzy wspólnie przygotowali raport.
