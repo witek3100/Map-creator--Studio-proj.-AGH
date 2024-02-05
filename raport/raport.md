@@ -7,8 +7,8 @@
 
 ### Dwie klasy - mapowanie terenów zabudowanych
 - klasyfikacja binarna: teren niezabudowany (lasy, pola, woda), zabudowania (miasta, drogi, wsie)
-- Zbiór danych stworzony samodzielnie, wykorzystując zdjęcia satelitarne pobrane za pomocą oprogramowania geoinformacyjnego QGIS, które następnie zostały podzielone na fragmenty 50x50 pixeli i oznaczane odpowiednią klasą przy użyciu prostego interfejsu użytkownika w PyQt.
-- Model oparty na architekturze ResNet-34 z wykorzystaniem wag dostępnych w bibliotece PyTorch. 
+- zbiór danych stworzony samodzielnie, wykorzystując zdjęcia satelitarne pobrane za pomocą oprogramowania geoinformacyjnego QGIS, które następnie zostały podzielone na fragmenty 50x50 pixeli i oznaczane odpowiednią klasą przy użyciu prostego interfejsu użytkownika w PyQt.
+- model oparty na architekturze ResNet-34 z wykorzystaniem wag dostępnych w bibliotece PyTorch. 
 
 ### Segmentacja semantyczna przy pomocy modelu U-Net
 - zbiór danych: [LandCover.ai v1](https://landcover.ai.linuxpolska.com/#dataset); zdjęcia satelitarne z Polski wraz z adnotacjami w postaci masek
@@ -16,7 +16,7 @@
 - model oparty na architekturze U-Net, zaimplementowany samodzielnie w bibliotece PyTorch
 
 ## Napotkane trudności i ich rozwiązania
-- doboór odpowiednich parametrów trenowania - ilość epok, rozmiar batch-a:
+- dobór odpowiednich parametrów trenowania - ilość epok, rozmiar batch-a:
     model oparty na ResNet-34 po około 5 epokach, przy użyciu 3000 zdjęć i rozmiaru batcha 64, był w stanie osiągnąc dokładność 90% w klasyfikacji teren zabudowany / teren niezabudowany. Zastosowanie techniki early stopping pozwoliło uniknąć przetrenowania.
 - stworzenie odpowiedniego zbioru danych do trenowania modelu klasyfikacji binarnej.
     - rozwiązanie: wystarczająca wielkość (~3000 zdjęć), równy rozkład klas, 
@@ -27,4 +27,4 @@
 
 ## Kontrybucje autorów
 
-Witold Nowogórski był odpowiedzialny za implementację klasyfikatora binarnego ResNet34, od pobierania zdjęć satelitarnych przez QGIS, następnie przez ich przetwarzanie, do trenowania modelu. Szymon Jurecki przygotował zbiór danych i go zaetykietował. Arkadiusz Paterak zaproponował użycie modelu U-Net, który zaimplementował, stworzył także prosty interfejs do zaprezentowania działania modelu. Wszyscy autorzy wspólnie przygotowali raport.
+Witold Nowogórski był odpowiedzialny za implementację klasyfikatora binarnego ResNet34, od pobierania zdjęć satelitarnych przez QGIS, następnie przez ich przetwarzanie, do trenowania modelu. Szymon Jurecki przygotował zbiór danych i go zaetykietował. Arkadiusz Paterak zaproponował użycie modelu U-Net, który zaimplementował i wytrenował, stworzył także prosty interfejs do zaprezentowania działania modelu. Wszyscy autorzy wspólnie przygotowali raport.
